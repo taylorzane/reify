@@ -274,7 +274,27 @@ function readPkgInfo(dirpath) {
     // reification even if "reify" is listed as a dependency.
     return null;
   }
-  if (! checkReify(pkg, "dependencies") &&
+
+  var thisPkg = readJSON(path.join('.', 'package.json'))
+
+  let forceReify = false
+  if (thisPkg !== null) {
+    var pkgDir = path.relative('./node_modules', dirpath)
+
+    if (thisPkg.reifyModules) {
+      thisPkg.reifyModules.forEach(module => {
+        if (forceReify) {
+          return
+        }
+        if (new RegExp(`${module}`).test(pkgDir)) {
+          forceReify = true
+        }
+      })
+    }
+  }
+
+  if (!forceReify &&
+      ! checkReify(pkg, "dependencies") &&
       // Use case: a package.json file may have "reify" in its
       // "devDependencies" section because it expects another package or
       // application to enable reification in production, but needs its
