@@ -127,6 +127,7 @@ function readPkgInfo(dirPath) {
   }
 
   const range =
+    process.env.REIFY_RANGE ||
     getReifyRange(pkgJSON, "dependencies") ||
     getReifyRange(pkgJSON, "peerDependencies") ||
     getReifyRange(pkgJSON, "devDependencies");
